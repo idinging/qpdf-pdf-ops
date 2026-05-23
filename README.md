@@ -33,8 +33,8 @@ sudo pacman -S qpdf
 # macOS (Homebrew)
 brew install qpdf
 
-# Windows (choco)
-choco install qpdf
+# Windows (winget)
+winget install --id QPDF.QPDF -e
 ```
 
 ## Skill 结构

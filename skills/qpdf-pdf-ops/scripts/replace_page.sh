@@ -45,9 +45,21 @@ if ! [[ "$repl_page" =~ ^[0-9]+$ ]] || [[ "$repl_page" -lt 1 ]]; then
     echo "replacement_page must be a positive integer" >&2; exit 2
 fi
 
-total=$(qpdf --show-npages "$input")
-if [[ "$page_num" -gt "$total" ]]; then
-    echo "page_num ($page_num) exceeds total pages ($total) in $input" >&2
+# Ensure output directory exists
+out_dir=$(dirname -- "$output")
+if [[ -n "$out_dir" && ! -d "$out_dir" ]]; then
+    mkdir -p -- "$out_dir"
+fi
+
+total_in=$(qpdf --show-npages "$input")
+if [[ "$page_num" -gt "$total_in" ]]; then
+    echo "page_num ($page_num) exceeds total pages ($total_in) in $input" >&2
+    exit 2
+fi
+
+total_repl=$(qpdf --show-npages "$repl")
+if [[ "$repl_page" -gt "$total_repl" ]]; then
+    echo "replacement_page ($repl_page) exceeds total pages ($total_repl) in $repl" >&2
     exit 2
 fi
 
@@ -63,7 +75,7 @@ fi
 
 args+=( "$repl" "$repl_page" )
 
-if [[ "$page_num" -lt "$total" ]]; then
+if [[ "$page_num" -lt "$total_in" ]]; then
     args+=( . "$((page_num + 1))-z" )
 fi
 
