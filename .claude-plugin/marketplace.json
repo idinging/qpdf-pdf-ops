@@ -8,8 +8,8 @@
   "plugins": [
     {
       "name": "qpdf-pdf-ops",
+      "source": "./plugins/qpdf-pdf-ops",
       "description": "Manipulate PDF files with the qpdf CLI — replace, delete, extract, merge, split, rotate, reorder pages, and handle encrypted PDFs. Lossless page-level structural edits.",
-      "source": ".",
       "category": "productivity"
     }
   ]

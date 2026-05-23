@@ -2,6 +2,17 @@
 
 基于 [qpdf](https://qpdf.readthedocs.io) 的 Claude Code skill，提供**无损**的 PDF 页面级操作 —— 不重新渲染、不栅格化，保留原始内容流。
 
+## Quick Install
+
+在 Claude Code 里运行：
+
+```bash
+/plugin marketplace add idinging/qpdf-pdf-ops
+/plugin install qpdf-pdf-ops@qpdf-pdf-ops
+```
+
+安装后**重启 Claude Code** 即可加载。系统需要先装好 qpdf（见下文）。
+
 ## 安装
 
 ### 一、安装 qpdf 命令行工具
@@ -49,19 +60,22 @@ winget install --id QPDF.QPDF -e   # Windows
 ## 仓库结构
 
 ```
-qpdf-pdf-ops/                       # GitHub repo / Claude Code plugin
+qpdf-pdf-ops/                          # GitHub repo (= marketplace)
 ├── .claude-plugin/
-│   ├── plugin.json                 # plugin 元信息
-│   └── marketplace.json            # marketplace 索引
-├── skills/
-│   └── qpdf-pdf-ops/               # skill 本体
-│       ├── SKILL.md                # 主入口
-│       ├── scripts/                # 7 个封装脚本
-│       └── references/             # recipes.md + page-ranges.md
+│   └── marketplace.json               # marketplace 索引（列出本仓库提供的 plugin）
+├── plugins/
+│   └── qpdf-pdf-ops/                  # plugin 实体（独立子目录）
+│       ├── .claude-plugin/
+│       │   └── plugin.json            # plugin 元信息
+│       └── skills/
+│           └── qpdf-pdf-ops/          # skill 本体
+│               ├── SKILL.md
+│               ├── scripts/           # 7 个封装脚本
+│               └── references/        # recipes.md + page-ranges.md
 ├── .github/workflows/
-│   └── skill-lint.yml              # PR / push 触发 lint + smoke test
+│   └── skill-lint.yml                 # PR/push 触发 lint + smoke test
 ├── bin/
-│   └── skill-lint                  # 校验 SKILL.md frontmatter / 引用 / 可执行权限
+│   └── skill-lint                     # 校验 SKILL.md / 引用 / 可执行权限
 └── README.md
 ```
 
@@ -91,7 +105,7 @@ qpdf PRIMARY.pdf --pages SRC RANGE ... -- OUT.pdf
 - 每个 `(文件, 范围)` 对按顺序贡献页面到输出
 - 末尾的 `--` **必须保留**
 
-详细语法见 `skills/qpdf-pdf-ops/references/recipes.md` 与 `page-ranges.md`。
+详细语法见 `plugins/qpdf-pdf-ops/skills/qpdf-pdf-ops/references/recipes.md` 与 `page-ranges.md`。
 
 ## 给贡献者
 
@@ -100,7 +114,7 @@ qpdf PRIMARY.pdf --pages SRC RANGE ... -- OUT.pdf
 ./bin/skill-lint
 
 # 也可指定单个 skill 目录
-./bin/skill-lint skills/qpdf-pdf-ops
+./bin/skill-lint plugins/qpdf-pdf-ops/skills/qpdf-pdf-ops
 ```
 
 PR 提交时 `.github/workflows/skill-lint.yml` 会自动跑 lint + qpdf 脚本 smoke test。

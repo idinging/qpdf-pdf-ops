@@ -3,10 +3,7 @@ name: Lint skills
 on:
   pull_request:
     paths:
-      - 'skills/**/SKILL.md'
-      - 'skills/**/scripts/**'
-      - 'skills/**/references/**'
-      - 'skills/**/assets/**'
+      - 'plugins/**'
       - '.claude-plugin/**'
       - 'bin/skill-lint'
       - '.github/workflows/skill-lint.yml'
@@ -27,7 +24,7 @@ jobs:
 
       - name: Validate plugin.json + marketplace.json
         run: |
-          for f in .claude-plugin/plugin.json .claude-plugin/marketplace.json; do
+          for f in .claude-plugin/marketplace.json plugins/qpdf-pdf-ops/.claude-plugin/plugin.json; do
             if [ ! -f "$f" ]; then
               echo "missing $f"; exit 1
             fi
@@ -37,10 +34,7 @@ jobs:
 
       - name: Smoke-test bundled scripts
         run: |
-          bash skills/qpdf-pdf-ops/scripts/check_qpdf.sh
-          # Build a tiny multi-page PDF with qpdf itself: clone any PDF would
-          # require fixtures we don't ship. Use qpdf to produce one from
-          # /usr/share/doc/qpdf/examples if present; otherwise skip.
+          bash plugins/qpdf-pdf-ops/skills/qpdf-pdf-ops/scripts/check_qpdf.sh
           if [ -f /usr/share/doc/qpdf/examples/pdf-bookmarks.pdf ]; then
             cp /usr/share/doc/qpdf/examples/pdf-bookmarks.pdf /tmp/in.pdf
           else
@@ -48,5 +42,5 @@ jobs:
             exit 0
           fi
           mkdir -p /tmp/out
-          bash skills/qpdf-pdf-ops/scripts/pdf_info.sh /tmp/in.pdf
-          bash skills/qpdf-pdf-ops/scripts/extract_pages.sh /tmp/in.pdf 1 /tmp/out/p1.pdf
+          bash plugins/qpdf-pdf-ops/skills/qpdf-pdf-ops/scripts/pdf_info.sh /tmp/in.pdf
+          bash plugins/qpdf-pdf-ops/skills/qpdf-pdf-ops/scripts/extract_pages.sh /tmp/in.pdf 1 /tmp/out/p1.pdf

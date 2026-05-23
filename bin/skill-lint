@@ -147,13 +147,18 @@ lint_one() {
 # Resolve targets
 declare -a targets=()
 if [[ $# -eq 0 ]]; then
-    while IFS= read -r d; do targets+=( "$d" ); done < <(find skills -mindepth 1 -maxdepth 1 -type d 2>/dev/null | sort)
+    # New layout: plugins/*/skills/*
+    while IFS= read -r d; do targets+=( "$d" ); done < <(find plugins -mindepth 3 -maxdepth 3 -type d -path '*/skills/*' 2>/dev/null | sort)
+    # Backwards-compat: old skills/* layout, if a contributor uses it
+    if [[ ${#targets[@]} -eq 0 ]]; then
+        while IFS= read -r d; do targets+=( "$d" ); done < <(find skills -mindepth 1 -maxdepth 1 -type d 2>/dev/null | sort)
+    fi
 else
     targets=( "$@" )
 fi
 
 if [[ ${#targets[@]} -eq 0 ]]; then
-    yellow "No skill directories found under skills/"
+    yellow "No skill directories found under plugins/*/skills/ or skills/"
     exit 0
 fi
 
