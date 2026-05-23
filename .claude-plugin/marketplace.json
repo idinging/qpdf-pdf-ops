@@ -1,16 +1,59 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "qpdf-pdf-ops",
-  "description": "qpdf-powered PDF page-level operations for Claude Code",
+  "description": "qpdf-powered PDF page-level operations for Claude Code — lossless replace / delete / extract / merge / split / rotate / reorder / encrypt / decrypt.",
   "owner": {
-    "name": "idinging"
+    "name": "idinging",
+    "email": "idinging@github"
   },
   "plugins": [
     {
       "name": "qpdf-pdf-ops",
       "source": "./plugins/qpdf-pdf-ops",
-      "description": "Manipulate PDF files with the qpdf CLI — replace, delete, extract, merge, split, rotate, reorder pages, and handle encrypted PDFs. Lossless page-level structural edits.",
-      "category": "productivity"
+      "description": "Manipulate PDF files with the qpdf CLI — replace, delete, extract, merge, split, rotate, reorder pages, and handle encrypted/password-protected PDFs. Lossless page-level structural edits; original content streams are preserved. Ships 7 ready-to-use shell scripts. Supports Chinese filenames. 无损 PDF 页面操作。",
+      "category": "productivity",
+      "tags": [
+        "pdf",
+        "qpdf",
+        "cli",
+        "lossless",
+        "encryption",
+        "merge",
+        "split",
+        "rotate",
+        "chinese",
+        "claude-skill"
+      ],
+      "keywords": [
+        "pdf",
+        "qpdf",
+        "pdf-manipulation",
+        "pdf-tools",
+        "pdf-editor",
+        "pdf-cli",
+        "page-replace",
+        "page-delete",
+        "page-extract",
+        "page-merge",
+        "page-split",
+        "page-rotate",
+        "page-reorder",
+        "pdf-encryption",
+        "pdf-decryption",
+        "password-protected-pdf",
+        "lossless-pdf",
+        "document-processing",
+        "claude-code",
+        "claude-skill",
+        "agent-skills",
+        "productivity",
+        "chinese",
+        "i18n",
+        "替换pdf",
+        "合并pdf",
+        "拆分pdf",
+        "pdf操作"
+      ]
     }
   ]
 }
