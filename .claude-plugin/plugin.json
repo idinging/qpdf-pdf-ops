@@ -1,0 +1,14 @@
+{
+  "name": "qpdf-pdf-ops",
+  "description": "Manipulate PDF files with the qpdf CLI — replace, delete, extract, merge, split, rotate, reorder pages, and handle encrypted PDFs. Lossless page-level structural edits.",
+  "version": "0.1.0",
+  "author": {
+    "name": "idinging"
+  },
+  "homepage": "https://github.com/idinging/qpdf-pdf-ops",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/idinging/qpdf-pdf-ops.git"
+  },
+  "license": "MIT"
+}

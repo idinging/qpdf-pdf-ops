@@ -1,0 +1,16 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "qpdf-pdf-ops",
+  "description": "qpdf-powered PDF page-level operations for Claude Code",
+  "owner": {
+    "name": "idinging"
+  },
+  "plugins": [
+    {
+      "name": "qpdf-pdf-ops",
+      "description": "Manipulate PDF files with the qpdf CLI — replace, delete, extract, merge, split, rotate, reorder pages, and handle encrypted PDFs. Lossless page-level structural edits.",
+      "source": ".",
+      "category": "productivity"
+    }
+  ]
+}

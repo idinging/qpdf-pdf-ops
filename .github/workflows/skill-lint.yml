@@ -1,0 +1,52 @@
+name: Lint skills
+
+on:
+  pull_request:
+    paths:
+      - 'skills/**/SKILL.md'
+      - 'skills/**/scripts/**'
+      - 'skills/**/references/**'
+      - 'skills/**/assets/**'
+      - '.claude-plugin/**'
+      - 'bin/skill-lint'
+      - '.github/workflows/skill-lint.yml'
+  push:
+    branches: [main, master]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install qpdf (used for script smoke-test)
+        run: sudo apt-get update && sudo apt-get install -y qpdf
+
+      - name: Run skill-lint
+        run: ./bin/skill-lint
+
+      - name: Validate plugin.json + marketplace.json
+        run: |
+          for f in .claude-plugin/plugin.json .claude-plugin/marketplace.json; do
+            if [ ! -f "$f" ]; then
+              echo "missing $f"; exit 1
+            fi
+            python3 -c "import json,sys; json.load(open('$f'))" || { echo "$f is not valid JSON"; exit 1; }
+            echo "OK $f"
+          done
+
+      - name: Smoke-test bundled scripts
+        run: |
+          bash skills/qpdf-pdf-ops/scripts/check_qpdf.sh
+          # Build a tiny multi-page PDF with qpdf itself: clone any PDF would
+          # require fixtures we don't ship. Use qpdf to produce one from
+          # /usr/share/doc/qpdf/examples if present; otherwise skip.
+          if [ -f /usr/share/doc/qpdf/examples/pdf-bookmarks.pdf ]; then
+            cp /usr/share/doc/qpdf/examples/pdf-bookmarks.pdf /tmp/in.pdf
+          else
+            echo "No bundled sample PDF in this image — skipping per-script smoke test"
+            exit 0
+          fi
+          mkdir -p /tmp/out
+          bash skills/qpdf-pdf-ops/scripts/pdf_info.sh /tmp/in.pdf
+          bash skills/qpdf-pdf-ops/scripts/extract_pages.sh /tmp/in.pdf 1 /tmp/out/p1.pdf

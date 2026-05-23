@@ -1,0 +1,174 @@
+#!/usr/bin/env bash
+# Lint SKILL.md files against the Claude Code skill spec.
+#
+# Usage:
+#   bin/skill-lint                                # lint every skills/*/SKILL.md
+#   bin/skill-lint skills/qpdf-pdf-ops            # lint one skill directory
+#   bin/skill-lint skills/foo skills/bar          # lint specific dirs
+#
+# Checks performed:
+#   * SKILL.md exists in each target dir
+#   * YAML frontmatter is present and closed
+#   * `name` is kebab-case, lowercase, <= 64 chars, matches the directory
+#   * `description` exists, <= 1024 chars, contains no angle brackets
+#   * scripts/*.sh are executable
+#   * referenced files (scripts/foo.sh, references/bar.md) actually exist
+#
+# Exit codes:
+#   0 = all lints passed
+#   1 = at least one lint failed
+#   2 = invocation error
+
+set -uo pipefail
+
+red()    { printf '\033[31m%s\033[0m\n' "$*" >&2; }
+yellow() { printf '\033[33m%s\033[0m\n' "$*" >&2; }
+green()  { printf '\033[32m%s\033[0m\n' "$*"; }
+
+errors=0
+warnings=0
+
+lint_one() {
+    local dir="$1"
+    local skill_file="$dir/SKILL.md"
+    local skill_name; skill_name="$(basename "$dir")"
+
+    echo "==> Linting $skill_file"
+
+    if [[ ! -f "$skill_file" ]]; then
+        red "  ERROR: $skill_file not found"
+        errors=$((errors + 1))
+        return
+    fi
+
+    # Extract frontmatter (lines between first two `---` markers)
+    local fm
+    fm=$(awk '
+        BEGIN { in_fm=0; n=0 }
+        /^---[[:space:]]*$/ {
+            if (in_fm == 0) { in_fm = 1; next }
+            else { exit }
+        }
+        in_fm == 1 { print }
+    ' "$skill_file")
+
+    if [[ -z "$fm" ]]; then
+        red "  ERROR: missing or empty YAML frontmatter"
+        errors=$((errors + 1))
+        return
+    fi
+
+    # name
+    local name
+    name=$(printf '%s\n' "$fm" | sed -nE 's/^name:[[:space:]]*"?([^"]+)"?[[:space:]]*$/\1/p' | head -n1)
+    if [[ -z "$name" ]]; then
+        red "  ERROR: frontmatter missing 'name'"
+        errors=$((errors + 1))
+    else
+        if [[ ${#name} -gt 64 ]]; then
+            red "  ERROR: name '$name' exceeds 64 chars (${#name})"
+            errors=$((errors + 1))
+        fi
+        if ! [[ "$name" =~ ^[a-z0-9]+(-[a-z0-9]+)*$ ]]; then
+            red "  ERROR: name '$name' must be kebab-case (lowercase + digits + hyphens, no leading/trailing hyphens)"
+            errors=$((errors + 1))
+        fi
+        if [[ "$name" != "$skill_name" ]]; then
+            red "  ERROR: name '$name' does not match directory name '$skill_name'"
+            errors=$((errors + 1))
+        fi
+    fi
+
+    # description (may span multiple lines until next top-level key or end of FM)
+    local desc
+    desc=$(printf '%s\n' "$fm" | awk '
+        BEGIN { in_desc=0; buf="" }
+        /^description:[[:space:]]*/ {
+            sub(/^description:[[:space:]]*/, "")
+            buf = $0
+            in_desc = 1
+            next
+        }
+        in_desc == 1 && /^[a-zA-Z_-]+:[[:space:]]/ { in_desc = 0 }
+        in_desc == 1 { buf = buf " " $0 }
+        END { print buf }
+    ')
+    desc="${desc## }"
+    desc="${desc%% }"
+
+    if [[ -z "$desc" ]]; then
+        red "  ERROR: frontmatter missing 'description'"
+        errors=$((errors + 1))
+    else
+        if [[ ${#desc} -gt 1024 ]]; then
+            red "  ERROR: description exceeds 1024 chars (${#desc})"
+            errors=$((errors + 1))
+        fi
+        if [[ "$desc" == *"<"* || "$desc" == *">"* ]]; then
+            red "  ERROR: description contains angle brackets (< or >)"
+            errors=$((errors + 1))
+        fi
+        if [[ ${#desc} -lt 40 ]]; then
+            yellow "  WARN: description is short (${#desc} chars); consider including trigger phrases"
+            warnings=$((warnings + 1))
+        fi
+    fi
+
+    # Script executability
+    if [[ -d "$dir/scripts" ]]; then
+        while IFS= read -r -d '' sh; do
+            if [[ ! -x "$sh" ]]; then
+                red "  ERROR: $sh is not executable (chmod +x it)"
+                errors=$((errors + 1))
+            fi
+        done < <(find "$dir/scripts" -maxdepth 1 -type f -name '*.sh' -print0)
+    fi
+
+    # Referenced files exist (very loose: paths mentioned that start with scripts/ or references/)
+    local refs missing
+    refs=$(grep -oE '(scripts|references|assets)/[A-Za-z0-9_./-]+' "$skill_file" | sort -u || true)
+    missing=0
+    while IFS= read -r ref; do
+        [[ -z "$ref" ]] && continue
+        # Strip backticks/quotes already stripped by grep; trim trailing punctuation
+        ref="${ref%[,.\`]}"
+        if [[ ! -e "$dir/$ref" ]]; then
+            red "  ERROR: SKILL.md references '$ref' but $dir/$ref does not exist"
+            errors=$((errors + 1))
+            missing=$((missing + 1))
+        fi
+    done <<< "$refs"
+
+    if [[ "$errors" -eq 0 || "$missing" -eq 0 ]]; then
+        green "  OK ($skill_name)"
+    fi
+}
+
+# Resolve targets
+declare -a targets=()
+if [[ $# -eq 0 ]]; then
+    while IFS= read -r d; do targets+=( "$d" ); done < <(find skills -mindepth 1 -maxdepth 1 -type d 2>/dev/null | sort)
+else
+    targets=( "$@" )
+fi
+
+if [[ ${#targets[@]} -eq 0 ]]; then
+    yellow "No skill directories found under skills/"
+    exit 0
+fi
+
+for t in "${targets[@]}"; do
+    # Allow passing path/to/SKILL.md as well
+    if [[ -f "$t" && "$(basename "$t")" == "SKILL.md" ]]; then
+        t="$(dirname "$t")"
+    fi
+    lint_one "$t"
+done
+
+echo ""
+if [[ "$errors" -gt 0 ]]; then
+    red   "FAIL: $errors error(s), $warnings warning(s)"
+    exit 1
+fi
+green "PASS: 0 errors, $warnings warning(s)"
+exit 0
