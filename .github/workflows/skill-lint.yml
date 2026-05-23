@@ -13,8 +13,12 @@ on:
 jobs:
   lint:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
 
       - name: Install qpdf (used for script smoke-test)
         run: sudo apt-get update && sudo apt-get install -y qpdf
