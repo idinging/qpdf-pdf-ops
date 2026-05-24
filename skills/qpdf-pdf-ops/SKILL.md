@@ -1,6 +1,6 @@
 ---
 name: qpdf-pdf-ops
-description: Manipulate PDF files with the qpdf CLI — replace a page with one from another PDF, delete or extract pages, merge or split documents, rotate, reorder pages, and handle password-protected PDFs. This skill should be used when the user wants to edit PDF page structure (e.g. "替换第N页", "删除某几页", "合并这些PDF", "把PDF拆成单页", "旋转第3页", "把PDF倒序", "解密PDF") and the operation can be expressed as page-level changes rather than content editing.
+description: Lossless PDF page manipulation using qpdf: merge PDFs, split PDFs, extract pages, delete pages, replace pages, insert pages, rotate pages, reorder pages, decrypt PDFs, encrypt PDFs. Use when the user wants structural PDF edits — "合并PDF", "拆分PDF", "提取PDF页", "删除PDF页", "替换PDF页", "旋转PDF", "PDF倒序", "PDF解密", "merge PDF", "split PDF", "extract PDF pages", "delete PDF pages", "replace PDF page", "rotate PDF", "reorder PDF", "decrypt PDF", "encrypt PDF". Content-preserving; does not rasterize or re-render.
 license: MIT
 metadata:
   author: idinging
