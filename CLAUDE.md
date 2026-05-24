@@ -9,7 +9,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 | 目录 | 用途 | 查找方 |
 |------|------|--------|
 | `skills/` | **规范源（canonical source）**，供 skills.sh 发现 | `npx skills add idinging/qpdf-pdf-ops` |
-| `plugin/skills/` | Claude Code plugin 入口，供 plugin 系统加载 | `/plugin install qpdf-pdf-ops@qpdf-pdf-ops` |
+| `plugin/skills/` | skill 实现，与 `skills/` 同步 | plugin 内部加载 SKILL.md |
+| `plugin/commands/` | **plugin 注册入口**，Claude Code plugin 系统通过此目录发现 skill | `/plugin install` → `/reload-plugins` |
 
 **同步规则：修改 skill 内容时，只改 `skills/`，改完后立即同步到 `plugin/skills/`：**
 
@@ -23,6 +24,8 @@ cp -r skills/* plugin/skills/
 ```bash
 diff -r skills plugin/skills
 ```
+
+**`plugin/commands/` 是 plugin 专属目录**，没有 `skills/` 下的对应物，可直接编辑。每个 `.md` 文件是 Claude Code 发现 skill 的注册点，内容精简（frontmatter + 简要用法），运行时委托给 `skills/` 中的 SKILL.md。
 
 ## 常用命令
 
@@ -49,6 +52,8 @@ qpdf-pdf-ops/                    # GitHub repo (= marketplace 根)
 ├── plugin/                      # Claude Code plugin 实体
 │   ├── .claude-plugin/
 │   │   └── plugin.json          # plugin 元信息（name, version, keywords）
+│   ├── commands/                # ← plugin 注册入口（Claude Code 通过此目录发现 skill）
+│   │   └── qpdf-pdf-ops.md      # 精简注册文件，委托给 skills/qpdf-pdf-ops/SKILL.md
 │   └── skills/                  # ← skills/ 的拷贝
 │       └── qpdf-pdf-ops/
 │           ├── SKILL.md         # 必须与 skills/ 下的一致
