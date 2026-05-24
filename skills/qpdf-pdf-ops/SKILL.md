@@ -4,7 +4,7 @@ description: "Lossless PDF page manipulation using qpdf: merge PDFs, split PDFs,
 license: MIT
 metadata:
   author: idinging
-  version: "0.1.0"
+  version: "0.1.2"
 ---
 
 # qpdf PDF Operations

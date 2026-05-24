@@ -78,6 +78,24 @@ qpdf-pdf-ops/                    # GitHub repo (= marketplace 根)
 - **`plugin.json`** — version 字段在发版时需手动更新，与 marketplace 的 description/tags/keywords 保持语义一致但不要求完全相同。
 - **`skills.sh.json`** — 仅影响 skills.sh 网站的展示排序，不影响 CLI 安装行为。
 
+### 版本号统一规则
+
+版本号同时出现在两个位置，**必须保持一致**：
+
+| 文件 | 版本号位置 |
+|------|-----------|
+| `skills/qpdf-pdf-ops/SKILL.md` | `metadata.version` — **规范源，手动编辑** |
+| `plugin/.claude-plugin/plugin.json` | `version` — **独立编辑** |
+
+发版 bump 版本号的标准流程：
+
+1. 修改 `skills/qpdf-pdf-ops/SKILL.md` 的 `metadata.version`
+2. 修改 `plugin/.claude-plugin/plugin.json` 的 `version` 为相同值
+3. 运行 `cp -r skills/* plugin/skills/` 将 SKILL.md 同步到 plugin
+4. 运行 `diff -r skills plugin/skills` 验证同步无遗漏
+
+**禁止** plugin.json 与 SKILL.md 的版本号不一致，也禁止只更新其中一个。
+
 ### SKILL.md YAML 易错点
 
 **description 必须用双引号包裹，避免 YAML 解析失败导致 plugin 系统显示 "0 skills"。**
