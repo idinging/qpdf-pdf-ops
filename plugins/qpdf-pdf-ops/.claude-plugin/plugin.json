@@ -1,6 +1,6 @@
 {
-  "name": "qpdf-pdf-ops",
-  "version": "0.1.0",
+  "name": "qpdf-pdf",
+  "version": "0.1.1",
   "description": "Manipulate PDF files with the qpdf CLI — replace, delete, extract, merge, split, rotate, reorder pages, and handle encrypted/password-protected PDFs. Lossless page-level structural edits; original content streams are preserved (no rasterizing, no re-rendering). Ships 7 ready-to-use shell scripts plus exhaustive page-range syntax reference. Supports Chinese / non-ASCII filenames. 用 qpdf 命令行无损操作 PDF 页面：替换、删除、提取、合并、拆分、旋转、重排、加密解密、PDF 信息查询。",
   "author": {
     "name": "idinging",

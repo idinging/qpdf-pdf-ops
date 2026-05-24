@@ -1,0 +1,11 @@
+{
+  "$schema": "https://skills.sh/schema.json",
+  "notGrouped": "top",
+  "groupings": [
+    {
+      "title": "PDF Tools",
+      "description": "Lossless PDF page-level operations powered by qpdf",
+      "skills": ["qpdf-pdf-ops"]
+    }
+  ]
+}
