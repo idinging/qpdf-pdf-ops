@@ -3,6 +3,7 @@ name: Lint skills
 on:
   pull_request:
     paths:
+      - 'plugin/**'
       - 'skills/**'
       - '.claude-plugin/**'
       - 'bin/skill-lint'
@@ -28,7 +29,7 @@ jobs:
 
       - name: Validate plugin.json + marketplace.json
         run: |
-          for f in .claude-plugin/marketplace.json .claude-plugin/plugin.json; do
+          for f in .claude-plugin/marketplace.json plugin/.claude-plugin/plugin.json; do
             if [ ! -f "$f" ]; then
               echo "missing $f"; exit 1
             fi
