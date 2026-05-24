@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "qpdf-pdf-ops",
-      "source": "./plugins/qpdf-pdf-ops",
+      "source": ".",
       "description": "Manipulate PDF files with the qpdf CLI — replace, delete, extract, merge, split, rotate, reorder pages, and handle encrypted/password-protected PDFs. Lossless page-level structural edits; original content streams are preserved. Ships 7 ready-to-use shell scripts. Supports Chinese filenames. 无损 PDF 页面操作。",
       "category": "productivity",
       "tags": [

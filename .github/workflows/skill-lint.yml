@@ -3,7 +3,7 @@ name: Lint skills
 on:
   pull_request:
     paths:
-      - 'plugins/**'
+      - 'skills/**'
       - '.claude-plugin/**'
       - 'bin/skill-lint'
       - '.github/workflows/skill-lint.yml'
@@ -28,7 +28,7 @@ jobs:
 
       - name: Validate plugin.json + marketplace.json
         run: |
-          for f in .claude-plugin/marketplace.json plugins/qpdf-pdf-ops/.claude-plugin/plugin.json; do
+          for f in .claude-plugin/marketplace.json .claude-plugin/plugin.json; do
             if [ ! -f "$f" ]; then
               echo "missing $f"; exit 1
             fi
@@ -38,7 +38,7 @@ jobs:
 
       - name: Smoke-test bundled scripts
         run: |
-          bash plugins/qpdf-pdf-ops/skills/qpdf-pdf-ops/scripts/check_qpdf.sh
+          bash skills/qpdf-pdf-ops/scripts/check_qpdf.sh
           if [ -f /usr/share/doc/qpdf/examples/pdf-bookmarks.pdf ]; then
             cp /usr/share/doc/qpdf/examples/pdf-bookmarks.pdf /tmp/in.pdf
           else
@@ -46,5 +46,5 @@ jobs:
             exit 0
           fi
           mkdir -p /tmp/out
-          bash plugins/qpdf-pdf-ops/skills/qpdf-pdf-ops/scripts/pdf_info.sh /tmp/in.pdf
-          bash plugins/qpdf-pdf-ops/skills/qpdf-pdf-ops/scripts/extract_pages.sh /tmp/in.pdf 1 /tmp/out/p1.pdf
+          bash skills/qpdf-pdf-ops/scripts/pdf_info.sh /tmp/in.pdf
+          bash skills/qpdf-pdf-ops/scripts/extract_pages.sh /tmp/in.pdf 1 /tmp/out/p1.pdf

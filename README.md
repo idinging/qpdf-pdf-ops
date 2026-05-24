@@ -73,22 +73,20 @@ winget install --id QPDF.QPDF -e   # Windows
 ## 仓库结构
 
 ```
-qpdf-pdf-ops/                          # GitHub repo (= marketplace)
+qpdf-pdf-ops/                          # GitHub repo (= marketplace = plugin)
 ├── .claude-plugin/
-│   └── marketplace.json               # marketplace 索引（列出本仓库提供的 plugin）
-├── plugins/
-│   └── qpdf-pdf-ops/                  # plugin 实体（独立子目录）
-│       ├── .claude-plugin/
-│       │   └── plugin.json            # plugin 元信息
-│       └── skills/
-│           └── qpdf-pdf-ops/          # skill 本体
-│               ├── SKILL.md
-│               ├── scripts/           # 7 个封装脚本
-│               └── references/        # recipes.md + page-ranges.md
+│   ├── marketplace.json               # marketplace 索引
+│   └── plugin.json                    # plugin 元信息
+├── skills/
+│   └── qpdf-pdf-ops/                  # skill 本体（唯一一份）
+│       ├── SKILL.md
+│       ├── scripts/                   # 7 个封装脚本
+│       └── references/                # recipes.md + page-ranges.md
+├── skills.sh.json                     # skills.sh 展示配置
 ├── .github/workflows/
-│   └── skill-lint.yml                 # PR/push 触发 lint + smoke test
+│   └── skill-lint.yml                 # CI 校验
 ├── bin/
-│   └── skill-lint                     # 校验 SKILL.md / 引用 / 可执行权限
+│   └── skill-lint                     # 本地 lint
 └── README.md
 ```
 
