@@ -4,19 +4,19 @@
 
 ## Quick Install
 
-### 方式一：Claude Code Plugin 安装
+### 方式一：npx skills 安装
+
+```bash
+npx skills add idinging/qpdf-pdf-ops
+```
+
+### 方式二：Claude Code Plugin 安装
 
 在 Claude Code 里运行：
 
 ```bash
 /plugin marketplace add idinging/qpdf-pdf-ops
 /plugin install qpdf-pdf-ops@qpdf-pdf-ops
-```
-
-### 方式二：npx skills 安装
-
-```bash
-npx skills add idinging/qpdf-pdf-ops
 ```
 
 安装后**重启 Claude Code** 即可加载。系统需要先装好 qpdf（见下文）。
